@@ -1,0 +1,70 @@
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+# Load API key from .env
+load_dotenv()
+
+# Create OpenAI client
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+print("=" * 50)
+print("              🤖 OneGPT")
+print("=" * 50)
+print("Your personal AI assistant")
+print("Type 'exit' to stop.\n")
+
+
+# Conversation history
+messages = [
+    {
+        "role": "system",
+        "content": (
+            "You are OneGPT, a helpful, intelligent and friendly AI assistant. "
+            "Answer questions clearly and accurately. "
+            "Explain difficult concepts in simple words when appropriate."
+        )
+    }
+]
+
+
+while True:
+
+    # Get user's message
+    user_input = input("You: ")
+
+    # Exit
+    if user_input.lower() == "exit":
+        print("\nOneGPT: Goodbye! 👋")
+        break
+
+    # Add user's message to conversation
+    messages.append({
+        "role": "user",
+        "content": user_input
+    })
+
+    try:
+
+        # Send conversation to OpenAI
+        response = client.responses.create(
+            model="gpt-5",
+            input=messages
+        )
+
+        # Get AI response
+        ai_response = response.output_text
+
+        # Display response
+        print("\nOneGPT:", ai_response)
+
+        # Save AI response to conversation history
+        messages.append({
+            "role": "assistant",
+            "content": ai_response
+        })
+
+    except Exception as e:
+        print("\nError:", e)
